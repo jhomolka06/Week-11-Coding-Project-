@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic-Tac-Toe</title>
+    <!-- Add Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <style>
+        /* Center everything on the page */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            text-align: center;
+        }
+
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            gap: 20px;
+            margin: 10px auto; /* Center the board */
+        }
+
+        /* Center the board vertically */
+    .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        height: 100vh;
+    }
+
+        .cell {
+            width: 100px;
+            height: 100px;
+            font-size: 36px;
+            background-color: #0fba29;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        /* Add margin to the reset button and center alerts */
+        #alerts {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .reset-button {
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Heading to display current player's turn -->
+        <h1 id="playerTurn" class="mb-4">Player X's Turn</h1>
+        <!-- Container for alerts -->
+        <div id="alerts"></div>
+        <!-- Restart button -->
+        <button id="restart" class="btn btn-primary reset-button">Restart Game</button>
+        <!-- Game board -->
+        <div class="board" id="board"></div>
+    </div>
+
+
+
+
+
+    <script>
+        // JavaScript code with comments
+        const board = document.getElementById("board");
+        const alerts = document.getElementById("alerts");
+        const cells = Array.from({ length: 9 }, () => null);
+        let currentPlayer = "X";
+        let winner = null;
+        const playerTurn = document.getElementById("playerTurn");
+        const restartButton = document.getElementById("restart");
+
+        // Handle cell clicks
+        board.addEventListener("click", (e) => {
+            const cell = e.target;
+            if (cell.classList.contains("cell") && !cells[cell.dataset.index] && !winner) {
+                cell.textContent = currentPlayer;
+                cells[cell.dataset.index] = currentPlayer;
+
+                if (checkWinner()) {
+                    showWinnerAlert(`Player ${currentPlayer} wins!`);
+                } else if (cells.every((cell) => cell !== null)) {
+                    showWinnerAlert("It's a draw!");
+                } else {
+                    currentPlayer = currentPlayer === "X" ? "O" : "X";
+                    playerTurn.textContent = `Player ${currentPlayer}'s Turn`;
+                }
+            }
+        });
+
+        // Handle restart button click
+        restartButton.addEventListener("click", () => {
+            cells.fill(null);
+            currentPlayer = "X";
+            winner = null;
+            playerTurn.textContent = `Player X's Turn`;
+            document.querySelectorAll(".cell").forEach((cell) => (cell.textContent = ""));
+            clearAlerts();
+        });
+
+        // Function to check for a winner
+        function checkWinner() {
+            const winCombos = [
+                [0, 1, 2],
+                [3, 4, 5],
+                [6, 7, 8],
+                [0, 3, 6],
+                [1, 4, 7],
+                [2, 5, 8],
+                [0, 4, 8],
+                [2, 4, 6],
+            ];
+
+            for (const combo of winCombos) {
+                const [a, b, c] = combo;
+                if (cells[a] && cells[a] === cells[b] && cells[a] === cells[c]) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        // Function to create a cell
+        function createCell(index) {
+            const cell = document.createElement("div");
+            cell.classList.add("cell");
+            cell.dataset.index = index;
+            return cell;
+        }
+
+        // Function to display winner alerts
+        function showWinnerAlert(message) {
+            const winnerAlert = document.createElement("div");
+            winnerAlert.className = "alert alert-success";
+            winnerAlert.innerHTML = `<strong>${message}</strong>`;
+            alerts.appendChild(winnerAlert);
+            winner = currentPlayer;
+        }
+
+        // Function to clear alerts
+        function clearAlerts() {
+            while (alerts.firstChild) {
+                alerts.removeChild(alerts.firstChild);
+            }
+        }
+
+        // Create game cells
+        for (let i = 0; i < 9; i++) {
+            board.appendChild(createCell(i));
+        }
+    </script>
+
+
+
+
+
+</body>
+
+</html>
